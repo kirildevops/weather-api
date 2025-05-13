@@ -1,0 +1,36 @@
+name: ses5
+
+services:
+  weather-api:
+    depends_on: 
+    - migrate
+    image: kirildevops/weather-api:v1
+    build: .
+    environment:
+      DATABASE_URL: "host=postgres user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable"
+    ports:
+      - "8000:8000"
+  postgres:
+
+    container_name: postgres
+    image: postgres:12
+    env_file: 
+      - path: "./.env"
+        required: true
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - my-local-net 
+    volumes:
+      - ./migrations/:/migrations
+    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${}POSTGRES_DB?sslmode=disable", "up"]
+volumes:  
+  pgdata: {}
