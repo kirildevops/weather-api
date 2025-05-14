@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/kirildevops/weather-api/pb";
+
+enum Frequency {
+    option allow_alias = true;
+    FREQUENCY_UNSPECIFIED = 0;
+    FREQUENCY_hourly = 1;
+    FREQUENCY_HOURLY = 1;
+    FREQUENCY_daily = 2;
+    FREQUENCY_DAILY = 2;
+  }
+
+message Subscription {
+    string email = 1;
+    string city = 2;
+    Frequency frequency = 3;
+    bool confirmed = 4;
+}

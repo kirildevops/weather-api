@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/kirildevops/weather-api/pb";
+
+message Weather {
+    float temperature = 1;
+    float humidity = 2;
+    string description = 3;
+}

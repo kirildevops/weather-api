@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "weather.proto";
+
+option go_package = "github.com/kirildevops/weather-api/pb";
+
+message GetWeatherRequest {
+    string city = 1;
+}
+
+message GetWeatherResponse {
+    Weather weather = 1;
+}
