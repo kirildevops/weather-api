@@ -17,7 +17,7 @@ WHERE token = $1
 `
 
 func (q *Queries) ConfirmSubscription(ctx context.Context, token uuid.UUID) error {
-	_, err := q.db.Exec(ctx, confirmSubscription, token)
+	_, err := q.db.ExecContext(ctx, confirmSubscription, token)
 	return err
 }
 
@@ -32,7 +32,7 @@ type DeleteSubscriptionParams struct {
 }
 
 func (q *Queries) DeleteSubscription(ctx context.Context, arg DeleteSubscriptionParams) error {
-	_, err := q.db.Exec(ctx, deleteSubscription, arg.Email, arg.Token)
+	_, err := q.db.ExecContext(ctx, deleteSubscription, arg.Email, arg.Token)
 	return err
 }
 
@@ -49,7 +49,7 @@ type InsertSubscriptionParams struct {
 }
 
 func (q *Queries) InsertSubscription(ctx context.Context, arg InsertSubscriptionParams) (Subscription, error) {
-	row := q.db.QueryRow(ctx, insertSubscription, arg.Email, arg.City, arg.Frequency)
+	row := q.db.QueryRowContext(ctx, insertSubscription, arg.Email, arg.City, arg.Frequency)
 	var i Subscription
 	err := row.Scan(
 		&i.ID,
@@ -69,7 +69,7 @@ WHERE email = $1
 `
 
 func (q *Queries) ListSubscription(ctx context.Context, email string) (int64, error) {
-	row := q.db.QueryRow(ctx, listSubscription, email)
+	row := q.db.QueryRowContext(ctx, listSubscription, email)
 	var registered int64
 	err := row.Scan(&registered)
 	return registered, err

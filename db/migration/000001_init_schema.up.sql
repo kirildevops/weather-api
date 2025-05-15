@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TYPE "frequency_enum" AS ENUM (
   'hourly',
   'daily'

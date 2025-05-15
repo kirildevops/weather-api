@@ -14,6 +14,9 @@ migratedown:
 sqlc:
 	sqlc generate
 
+test:
+	go test -v -cover ./...
+
 proto:
 	rm -f pb/*.go
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
