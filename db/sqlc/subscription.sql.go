@@ -7,7 +7,34 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
+
+const confirmSubscription = `-- name: ConfirmSubscription :exec
+UPDATE subscriptions SET confirmed = true
+WHERE token = $1
+`
+
+func (q *Queries) ConfirmSubscription(ctx context.Context, token uuid.UUID) error {
+	_, err := q.db.Exec(ctx, confirmSubscription, token)
+	return err
+}
+
+const deleteSubscription = `-- name: DeleteSubscription :exec
+DELETE FROM subscriptions
+WHERE email = $1 AND token = $2
+`
+
+type DeleteSubscriptionParams struct {
+	Email string    `json:"email"`
+	Token uuid.UUID `json:"token"`
+}
+
+func (q *Queries) DeleteSubscription(ctx context.Context, arg DeleteSubscriptionParams) error {
+	_, err := q.db.Exec(ctx, deleteSubscription, arg.Email, arg.Token)
+	return err
+}
 
 const insertSubscription = `-- name: InsertSubscription :one
 INSERT INTO subscriptions (email, city, frequency, token)
@@ -33,4 +60,17 @@ func (q *Queries) InsertSubscription(ctx context.Context, arg InsertSubscription
 		&i.Confirmed,
 	)
 	return i, err
+}
+
+const listSubscription = `-- name: ListSubscription :one
+SELECT count(*) as registered
+FROM subscriptions
+WHERE email = $1
+`
+
+func (q *Queries) ListSubscription(ctx context.Context, email string) (int64, error) {
+	row := q.db.QueryRow(ctx, listSubscription, email)
+	var registered int64
+	err := row.Scan(&registered)
+	return registered, err
 }
