@@ -16,7 +16,7 @@ CREATE TYPE "frequency_enum" AS ENUM (
 
 CREATE TABLE "subscriptions" (
   "id" bigserial PRIMARY KEY,
-  "email" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
   "city" varchar NOT NULL,
   "frequency" frequency_enum NOT NULL,
   "token" uuid NOT NULL,
