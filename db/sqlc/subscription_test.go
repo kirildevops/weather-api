@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 
 	"github.com/kirildevops/weather-api/util"
@@ -70,6 +71,6 @@ func TestDeleteSubscription(t *testing.T) {
 	testQueries.DeleteSubscription(context.Background(), arg)
 
 	nobody, err := testQueries.GetSubscription(context.Background(), deleteme.Email)
-	require.Errorf(t, err, "sql: no rows in result set")
+	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, nobody)
 }
