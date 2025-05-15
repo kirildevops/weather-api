@@ -4,14 +4,15 @@ import (
 	"context"
 	"testing"
 
+	"github.com/kirildevops/weather-api/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestInsertSubscription(t *testing.T) {
 	arg := InsertSubscriptionParams{
-		Email:     "test@test.abc",
-		City:      "Neverland",
-		Frequency: "daily",
+		Email:     util.RandomEmail(),
+		City:      util.RandomCity(),
+		Frequency: FrequencyEnum(util.RandomFrequency()),
 	}
 
 	sub, err := testQueries.InsertSubscription(context.Background(), arg)
