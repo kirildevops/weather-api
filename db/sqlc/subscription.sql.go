@@ -36,6 +36,26 @@ func (q *Queries) DeleteSubscription(ctx context.Context, arg DeleteSubscription
 	return err
 }
 
+const getSubscription = `-- name: GetSubscription :one
+SELECT id, email, city, frequency, token, confirmed
+FROM subscriptions
+WHERE email = $1
+`
+
+func (q *Queries) GetSubscription(ctx context.Context, email string) (Subscription, error) {
+	row := q.db.QueryRowContext(ctx, getSubscription, email)
+	var i Subscription
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.City,
+		&i.Frequency,
+		&i.Token,
+		&i.Confirmed,
+	)
+	return i, err
+}
+
 const insertSubscription = `-- name: InsertSubscription :one
 INSERT INTO subscriptions (email, city, frequency, token)
 VALUES ($1, $2, $3, uuid_generate_v4())
@@ -60,17 +80,4 @@ func (q *Queries) InsertSubscription(ctx context.Context, arg InsertSubscription
 		&i.Confirmed,
 	)
 	return i, err
-}
-
-const listSubscription = `-- name: ListSubscription :one
-SELECT count(*) as registered
-FROM subscriptions
-WHERE email = $1
-`
-
-func (q *Queries) ListSubscription(ctx context.Context, email string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, listSubscription, email)
-	var registered int64
-	err := row.Scan(&registered)
-	return registered, err
 }

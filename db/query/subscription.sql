@@ -1,5 +1,5 @@
--- name: ListSubscription :one
-SELECT count(*) as registered
+-- name: GetSubscription :one
+SELECT *
 FROM subscriptions
 WHERE email = $1;
 
