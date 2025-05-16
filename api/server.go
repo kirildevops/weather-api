@@ -15,9 +15,9 @@ func NewServer(store *db.Store) *Server {
 	router := gin.Default()
 
 	apiRouterGroup := router.Group("/api")
-	// apiRouterGroup.GET("/weather", getWeather)
+	apiRouterGroup.GET("/weather", getWeather)
 	apiRouterGroup.POST("/subscribe", server.subscribe)
-	// apiRouterGroup.GET("/confirm/:token", server.confirmSubscription)
+	apiRouterGroup.GET("/confirm/:token", server.confirmSubscription)
 	// apiRouterGroup.GET("/unsubscribe/:token", server.unsubscribe)
 
 	server.router = router

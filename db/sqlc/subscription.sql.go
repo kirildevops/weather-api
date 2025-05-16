@@ -56,6 +56,26 @@ func (q *Queries) GetSubscription(ctx context.Context, email string) (Subscripti
 	return i, err
 }
 
+const getSubscriptionByToken = `-- name: GetSubscriptionByToken :one
+SELECT id, email, city, frequency, token, confirmed
+FROM subscriptions
+WHERE token = $1
+`
+
+func (q *Queries) GetSubscriptionByToken(ctx context.Context, token uuid.UUID) (Subscription, error) {
+	row := q.db.QueryRowContext(ctx, getSubscriptionByToken, token)
+	var i Subscription
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.City,
+		&i.Frequency,
+		&i.Token,
+		&i.Confirmed,
+	)
+	return i, err
+}
+
 const insertSubscription = `-- name: InsertSubscription :one
 INSERT INTO subscriptions (email, city, frequency, token)
 VALUES ($1, $2, $3, uuid_generate_v4())
