@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 	db "github.com/kirildevops/weather-api/db/sqlc"
 	"github.com/lib/pq"
@@ -21,6 +21,11 @@ type CreateSubscriptionRequest struct {
 }
 
 func (server *Server) subscribe(ctx *gin.Context) {
+	// formEmail := ctx.PostForm("email")
+	// formCity := ctx.PostForm("city")
+	// formFreq := ctx.PostForm("frequency")
+	// fmt.Println(formEmail, formCity, formFreq)
+
 	var req CreateSubscriptionRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
@@ -81,13 +86,13 @@ func (server *Server) subscribe(ctx *gin.Context) {
 func (server *Server) confirmSubscription(ctx *gin.Context) {
 	token := ctx.Param("token")
 	if token == "" {
-		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("Confirmation Token Not Found. Use the link from the Email.")))
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("Invalid token")))
 		return
 	}
 	token = strings.Trim(token, "/")
 	uuid_token, err := uuid.Parse(token)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, "Invalid token")
 		return
 	}
 
@@ -104,4 +109,39 @@ func (server *Server) confirmSubscription(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+}
+
+func (server *Server) unsubscribe(ctx *gin.Context) {
+	token := ctx.Param("token")
+	if token == "" {
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("Invalid token")))
+		return
+	}
+	token = strings.Trim(token, "/")
+	uuid_token, err := uuid.Parse(token)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, "Invalid token")
+		return
+	}
+
+	sub, err := server.store.GetSubscriptionByToken(ctx, uuid_token)
+	if err == sql.ErrNoRows {
+		ctx.JSON(http.StatusNotFound, errorResponse(errors.New("Token not found")))
+		return
+	} else if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	arg := db.DeleteSubscriptionParams{
+		Email: sub.Email,
+		Token: uuid_token,
+	}
+
+	if err = server.store.DeleteSubscription(ctx, arg); err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "Unsubscribed successfully")
 }
