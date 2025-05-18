@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+import "rpc_get_weather.proto";
+import "rpc_create_subscription.proto";
+
+option go_package = "github.com/kirildevops/weather-api/pb";
+
+service WeatherApp {
+    rpc GetWeather (GetWeatherRequest) returns (GetWeatherResponse);
+    rpc CreateSubscription (CreateSubscriptionRequest) returns (CreateSubscriptionResponse);
+}

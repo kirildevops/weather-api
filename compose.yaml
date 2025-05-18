@@ -9,7 +9,7 @@ services:
     environment:
       DATABASE_URL: "host=postgres user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} dbname=${POSTGRES_DB} sslmode=disable"
     ports:
-      - "8000:8000"
+      - "8080:8080"
   postgres:
 
     container_name: postgres
@@ -30,7 +30,14 @@ services:
     networks:
       - my-local-net 
     volumes:
-      - ./migrations/:/migrations
-    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${}POSTGRES_DB?sslmode=disable", "up"]
+      - ./db/migration:/migrations
+    entrypoint:
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"      ]
+    command: ["up"]
 volumes:  
   pgdata: {}

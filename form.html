@@ -1,0 +1,14 @@
+{{define "form.html"}}
+<form action="{{ .action }}" method="POST">
+    <label>Email:</label><br />
+    <input type="text" name="email"><br />
+    <label>City:</label><br />
+    <input type="text" name="city"><br />
+    <label for="frequency">Choose a frequency:</label><br />
+    <select id="frequency" name="frequency" size="3">
+      <option value="hourly">Hourly</option>
+      <option value="daily">Daily</option>
+    </select>
+    <input type="submit">
+</form>
+{{ end }}
