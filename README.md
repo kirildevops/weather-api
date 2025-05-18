@@ -2,6 +2,7 @@
 
 ## Instructions
 
+
 0. Check the `app.env` file. It contains the config of our app.
     This information is sensitive and commited to the repo just for the development purposes.  
     `Viper` will read this file and populate some configs.  
@@ -23,3 +24,4 @@ Run the next set of commands to check the work
 9. Test **Weather** Endpoint: Open the new terminal window and run `curl -X GET http://localhost:8080/api/weather?city=Kyiv`
 
 100. Use `make proto` to build the `pb.go` files in the `pb` directory [UNDER CONSTRUCTION]
+
