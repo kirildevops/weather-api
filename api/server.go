@@ -13,17 +13,6 @@ type Server struct {
 func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
-	// router.GET("/", func(c *gin.Context) {
-	// 	c.HTML(http.StatusOK, "index.html", gin.H{
-	// 		"content": "You reached the album management site...",
-	// 	})
-	// })
-
-	// router.GET("/", func(ctx *gin.Context) {
-	// 	ctx.HTML(http.StatusOK, "templates/form.html", gin.H{
-	// 		"action": "/subscribe",
-	// 	})
-	// })
 	apiRouterGroup := router.Group("/api")
 	apiRouterGroup.GET("/weather", getWeather)
 	apiRouterGroup.POST("/subscribe", server.subscribe)
@@ -40,4 +29,8 @@ func (server *Server) Start(address string) error {
 
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
+}
+
+func normalResponse(str string) gin.H {
+	return gin.H{"message": str}
 }

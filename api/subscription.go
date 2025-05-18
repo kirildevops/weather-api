@@ -21,11 +21,6 @@ type CreateSubscriptionRequest struct {
 }
 
 func (server *Server) subscribe(ctx *gin.Context) {
-	// formEmail := ctx.PostForm("email")
-	// formCity := ctx.PostForm("city")
-	// formFreq := ctx.PostForm("frequency")
-	// fmt.Println(formEmail, formCity, formFreq)
-
 	var req CreateSubscriptionRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
@@ -50,36 +45,13 @@ func (server *Server) subscribe(ctx *gin.Context) {
 				ctx.JSON(http.StatusConflict, errorResponse(errors.New("Email already subscribed")))
 				return
 			}
-			// fmt.Println("Severity:", err.Severity)
-			// fmt.Println("Code:", err.Code)
-			// fmt.Println("Message:", err.Message)
-			// fmt.Println("Detail:", err.Detail)
-			// fmt.Println("Schema:", err.Schema)
-			// fmt.Println("Table:", err.Table)
-			// fmt.Println("Constraint:", err.Constraint)
-			// fmt.Println("File:", err.File)
-			// fmt.Println("Line:", err.Line)
-			// fmt.Println("Routine:", err.Routine)
-			//
-			// Produces
-			//
-			// Severity: ERROR
-			// Code: 23505
-			// Message: duplicate key value violates unique constraint "subscriptions_email_key"
-			// Detail: Key (email)=(your@email.com) already exists.
-			// Schema: public
-			// Table: subscriptions
-			// Constraint: subscriptions_email_key
-			// File: nbtinsert.c
-			// Line: 563
-			// Routine: _bt_check_unique
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	// ctx.JSON(http.StatusOK, subscription)
 	fmt.Println(subscription)
-	ctx.JSON(http.StatusOK, "Subscription successful. Confirmation email sent.")
+	ctx.JSON(http.StatusOK, normalResponse("Subscription successful. Confirmation email sent."))
 
 }
 
@@ -92,7 +64,7 @@ func (server *Server) confirmSubscription(ctx *gin.Context) {
 	token = strings.Trim(token, "/")
 	uuid_token, err := uuid.Parse(token)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Invalid token")
+		ctx.JSON(http.StatusBadRequest, normalResponse("Invalid token"))
 		return
 	}
 
@@ -109,6 +81,8 @@ func (server *Server) confirmSubscription(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	ctx.JSON(http.StatusOK, normalResponse("Subscription confirmed successfully"))
 }
 
 func (server *Server) unsubscribe(ctx *gin.Context) {
@@ -120,7 +94,7 @@ func (server *Server) unsubscribe(ctx *gin.Context) {
 	token = strings.Trim(token, "/")
 	uuid_token, err := uuid.Parse(token)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Invalid token")
+		ctx.JSON(http.StatusBadRequest, normalResponse("Invalid token"))
 		return
 	}
 
@@ -143,5 +117,5 @@ func (server *Server) unsubscribe(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "Unsubscribed successfully")
+	ctx.JSON(http.StatusOK, normalResponse("Unsubscribed successfully"))
 }

@@ -31,6 +31,6 @@ services:
       - my-local-net 
     volumes:
       - ./migrations/:/migrations
-    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${}POSTGRES_DB?sslmode=disable", "up"]
+    command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable", "up"]
 volumes:  
   pgdata: {}
