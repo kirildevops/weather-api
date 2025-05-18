@@ -44,7 +44,11 @@ func (server *Server) subscribe(ctx *gin.Context) {
 			if err.Code == "23505" {
 				ctx.JSON(http.StatusConflict, errorResponse(errors.New("Email already subscribed")))
 				return
+			} else if err.Code == "22P02" {
+				ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("Provide all of ['email', 'city', 'frequency'] Frequency is 'daily' OR 'hourly'")))
+				return
 			}
+			// fmt.Println(err.Code)
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
